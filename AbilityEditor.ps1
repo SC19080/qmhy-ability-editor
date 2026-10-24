@@ -1,11 +1,11 @@
 ﻿# =====================================================
-#  漆黑的魅影 5.0EX+BW  特性(Ability)修改器  v1.2
-#  v1.2: 移除内置默认 ROM 路径; 支持拖放 .gba 载入; 可选环境变量 ABILITY_EDITOR_ROM 自动载入
+#  漆黑的魅影 5.0EX+BW  特性/种族值修改器  v1.4
 #  底层情报: 种族值表 0x3203E8 (槽-302=妙蛙种子), 411 条目, 步长 28
-#            条目 +0x16/+0x17 = 特性1/特性2 (引擎编号)
-#  引擎编号 1-76 与官方特性编号一致; 77=气闸; 78+ 为改版自定义(已解出部分)
-#  用法: 右键 "使用 PowerShell 运行", 或双击 AbilityEditor.bat
-#  特性: 不写原文件, 另存为新 ROM; 打开时做 8 点锚点校验(不含特性字节)
+#            条目 +0x00..0x05 = HP/攻/防/速/特攻/特防
+#            条目 +0x16/+0x17 = 特性1/特性2 (引擎编号, 1..150 全解码)
+#  v1.4: 新增种族值编辑 (1..255 校验, 总和显示, 与特性混合导出)
+#  用法: 双击 AbilityEditor.bat, 或右键 ps1 "使用 PowerShell 运行"
+#  特性: 不写原文件, 另存为新 ROM; 打开时做 7 点锚点校验
 # =====================================================
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
@@ -100,7 +100,7 @@ slot|offset|name|sp|a1|a2|stats|types
 -223|0x00320C8C|呆壳兽|80|89|20|95,75,110,30,100,80|11,14
 -222|0x00320CA8|小磁怪|81|5|42|25,35,70,45,95,55|13,8
 -221|0x00320CC4|自爆磁怪|462|5|42|70,70,115,60,130,90|13,8
--220|0x00320CE0|未知(槽位-220)|0|145|39|52,65,55,60,58,62|0,2
+-220|0x00320CE0|大葱鸭|0|145|39|52,65,55,60,58,62|0,2
 -219|0x00320CFC|嘟嘟|84|48|113|35,85,45,75,35,35|0,2
 -218|0x00320D18|嘟嘟利|85|48|113|60,110,70,100,60,60|0,2
 -217|0x00320D34|小海狮|86|84|96|65,45,55,45,45,70|11,11
@@ -206,7 +206,7 @@ slot|offset|name|sp|a1|a2|stats|types
 -117|0x00321824|蚊香蛙皇|186|11|2|90,75,75,70,90,100|11,11
 -116|0x00321840|姆克儿|396|51|102|40,55,30,60,30,30|0,2
 -115|0x0032185C|姆克鸟|397|22|102|55,75,50,80,40,40|0,2
--114|0x00321878|未知(槽位-114)|0|22|102|85,120,70,100,50,50|0,2
+-114|0x00321878|毽子棉|0|22|102|85,120,70,100,50,50|0,2
 -113|0x00321894|双尾怪手|424|79|94|75,100,66,115,60,66|0,0
 -112|0x003218B0|百合根娃娃|548|34|20|45,35,50,30,70,50|12,12
 -111|0x003218CC|裙儿小姐|549|34|20|70,60,75,90,110,75|12,12
@@ -228,7 +228,7 @@ slot|offset|name|sp|a1|a2|stats|types
 -95|0x00321A8C|大钢蛇|208|69|80|75,85,200,30,55,65|8,4
 -94|0x00321AA8|大颚蚁|328|52|80|45,100,45,10,45,45|4,4
 -93|0x00321AC4|沙漠蜻蜓|330|26|26|80,100,80,100,80,80|4,16
--92|0x00321AE0|未知(槽位-92)|0|33|22|65,95,75,85,55,55|11,3
+-92|0x00321AE0|河豚|0|33|22|65,95,75,85,55,55|11,3
 -91|0x00321AFC|巨钳螳螂|212|68|79|70,130,100,65,55,80|6,8
 -90|0x00321B18|壶壶|213|5|92|20,10,230,5,10,230|6,5
 -89|0x00321B34|赫拉克罗斯|214|143|62|80,125,75,85,40,95|6,1
@@ -239,11 +239,11 @@ slot|offset|name|sp|a1|a2|stats|types
 -84|0x00321BC0|达摩狒狒|555|80|80|105,140,55,95,30,55|10,10
 -83|0x00321BDC|小山猪|220|95|47|50,50,40,50,30,30|15,4
 -82|0x00321BF8|象牙猪|473|95|47|110,130,80,80,70,60|15,4
--81|0x00321C14|未知(槽位-81)|0|55|89|55,55,85,35,65,85|11,5
+-81|0x00321C14|太阳珊瑚|0|55|89|55,55,85,35,65,85|11,5
 -80|0x00321C30|轻飘飘|592|11|134|55,40,50,40,65,85|11,7
 -79|0x00321C4C|胖嘟嘟|593|11|134|100,60,70,60,85,105|11,7
 -78|0x00321C68|雪妖女|478|95|134|70,80,70,110,80,70|15,7
--77|0x00321C84|未知(槽位-77)|0|33|11|65,40,70,70,80,140|11,2
+-77|0x00321C84|飞鱼怪|0|33|11|65,40,70,70,80,140|11,2
 -76|0x00321CA0|盔甲鸟|227|51|5|65,80,140,70,40,70|8,2
 -75|0x00321CBC|戴鲁比|228|18|136|45,60,30,65,80,50|17,10
 -74|0x00321CD8|黑鲁加|229|18|136|75,90,50,95,110,80|17,10
@@ -268,8 +268,8 @@ slot|offset|name|sp|a1|a2|stats|types
 -55|0x00321EEC|班基拉斯|248|45|136|100,134,110,61,95,100|5,17
 -54|0x00321F08|洛奇亚|249|46|83|106,90,130,110,90,154|14,2
 -53|0x00321F24|凤王|250|46|89|106,130,90,90,110,154|10,2
--52|0x00321F40|未知(槽位-52)|0|30|30|100,100,100,100,100,100|14,12
--51|0x00321F5C|未知(槽位-51)|0|101|101|100,100,100,100,100,100|14,10
+-52|0x00321F40|雪拉比|0|30|30|100,100,100,100,100,100|14,12
+-51|0x00321F5C|比克提尼|0|101|101|100,100,100,100,100,100|14,10
 -50|0x00321F78|藤藤蛇|495|65|99|45,45,55,63,45,55|12,12
 -49|0x00321F94|青藤蛇|496|65|99|60,60,75,83,60,75|12,12
 -48|0x00321FB0|君主蛇|497|65|99|75,75,95,113,75,95|12,12
@@ -289,7 +289,7 @@ slot|offset|name|sp|a1|a2|stats|types
 -34|0x00322138|莱希拉姆|643|137|137|100,120,100,90,150,120|16,10
 -33|0x00322154|捷克罗姆|644|138|138|100,150,120,90,120,100|16,13
 -32|0x00322170|酋雷姆|646|138|138|125,170,100,95,120,90|16,15
--31|0x0032218C|未知(槽位-31)|0|84|84|100,100,100,100,100,100|11,11
+-31|0x0032218C|玛娜菲|0|84|84|100,100,100,100,100,100|11,11
 -30|0x003221A8|谢米|492|32|32|100,103,75,127,120,75|12,2
 -29|0x003221C4|阿尔宙斯|493|32|32|120,120,120,120,120,120|0,0
 -28|0x003221E0|凯路迪欧|647|93|93|91,72,90,108,129,90|11,1
@@ -322,18 +322,18 @@ slot|offset|name|sp|a1|a2|stats|types
 -1|0x003224D4|铁面忍者|291|3|3|61,90,45,160,50,50|6,2
 0|0x003224F0|脱壳忍者|292|25|25|1,90,45,40,30,30|6,7
 1|0x0032250C|傲骨燕|276|62|120|40,55,30,85,30,30|0,2
-2|0x00322528|未知(槽位+2)|0|62|120|60,85,60,125,50,50|0,2
+2|0x00322528|大麻燕|0|62|120|60,85,60,125,50,50|0,2
 3|0x00322544|蘑蘑菇|285|87|112|60,40,60,35,40,60|12,12
 4|0x00322560|斗笠菇|286|87|79|60,130,80,70,60,60|12,1
 5|0x0032257C|晃晃斑|327|20|99|60,60,60,60,60,60|0,0
 6|0x00322598|长翅鸥|278|51|44|40,30,30,85,55,30|11,2
-7|0x003225B4|未知(槽位+7)|0|51|44|60,50,100,65,85,70|11,2
+7|0x003225B4|大嘴鹈鹕|0|51|44|60,50,100,65,85,70|11,2
 8|0x003225D0|燃烧虫|636|49|68|55,85,55,60,50,55|6,10
 9|0x003225EC|火神蛾|637|49|68|85,60,65,100,135,105|6,10
 10|0x00322608|吼吼鲸|320|41|46|130,70,35,60,70,35|11,11
 11|0x00322624|吼鲸王|321|41|46|170,90,45,60,90,45|11,11
 12|0x00322640|向尾喵|300|122|135|50,45,45,50,35,35|0,0
-13|0x0032265C|未知(槽位+13)|0|122|135|70,65,65,70,55,55|0,0
+13|0x0032265C|大松鼠|0|122|135|70,65,65,70,55,55|0,0
 14|0x00322678|变隐龙|352|16|16|60,90,70,40,60,120|0,0
 15|0x00322694|铜镜怪|436|26|104|57,24,86,23,24,86|8,14
 16|0x003226B0|青铜钟|437|26|104|67,89,116,33,79,116|8,14
@@ -365,8 +365,8 @@ slot|offset|name|sp|a1|a2|stats|types
 42|0x00322988|暴雪王|460|81|43|90,92,75,60,92,85|12,15
 43|0x003229A4|雪童子|361|147|96|50,50,50,50,50,50|15,15
 44|0x003229C0|冰鬼护|362|147|96|80,80,80,80,80,80|15,15
-45|0x003229DC|未知(槽位+45)|0|26|26|70,55,65,70,95,85|5,14
-46|0x003229F8|未知(槽位+46)|0|26|26|70,95,85,70,55,65|5,14
+45|0x003229DC|月亮石|0|26|26|70,55,65,70,95,85|5,14
+46|0x003229F8|太阳石|0|26|26|70,95,85,70,55,65|5,14
 47|0x00322A14|小猫怪|403|22|62|45,65,34,45,40,34|13,13
 48|0x00322A30|跳跳猪|325|47|20|60,25,35,60,70,80|14,14
 49|0x00322A4C|噗噗猪|326|47|20|80,45,65,80,90,110|14,14
@@ -380,7 +380,7 @@ slot|offset|name|sp|a1|a2|stats|types
 57|0x00322B2C|小果然|360|23|148|95,23,48,23,23,48|14,14
 58|0x00322B48|夜巡灵|355|26|126|20,40,90,25,30,90|7,7
 59|0x00322B64|黑夜魔灵|477|46|126|45,100,135,45,65,135|7,7
-60|0x00322B80|未知(槽位+60)|0|30|79|60,70,55,90,125,105|12,3
+60|0x00322B80|芭蕾玫瑰|0|30|79|60,70,55,90,125,105|12,3
 61|0x00322B9C|懒人獭|287|54|54|60,60,60,30,35,35|0,0
 62|0x00322BB8|过动猿|288|72|72|80,80,80,90,55,55|0,0
 63|0x00322BD4|请假王|289|54|54|150,160,100,100,95,65|0,0
@@ -403,8 +403,8 @@ slot|offset|name|sp|a1|a2|stats|types
 80|0x00322DB0|斧牙龙|611|129|136|66,117,70,67,40,50|16,16
 81|0x00322DCC|双斧战龙|612|129|136|76,147,90,97,60,70|16,16
 82|0x00322DE8|飘浮泡泡|351|59|59|70,70,70,70,70,70|0,0
-83|0x00322E04|未知(槽位+83)|0|68|78|65,73,55,85,47,75|6,6
-84|0x00322E20|未知(槽位+84)|0|108|78|65,47,55,85,73,75|6,6
+83|0x00322E04|母萤火虫|0|68|78|65,73,55,85,47,75|6,6
+84|0x00322E20|公萤火虫|0|108|78|65,47,55,85,73,75|6,6
 85|0x00322E3C|触手百合|345|21|109|66,41,77,23,61,87|5,12
 86|0x00322E58|摇篮百合|346|21|109|86,81,97,43,81,107|5,12
 87|0x00322E74|太古羽虫|347|4|33|45,95,50,75,40,50|5,6
@@ -426,12 +426,13 @@ slot|offset|name|sp|a1|a2|stats|types
 103|0x00323034|烈空坐|384|77|77|105,150,90,95,150,90|16,2
 104|0x00323050|拉帝亚斯|380|26|26|80,80,90,110,110,130|16,14
 105|0x0032306C|拉帝欧斯|381|26|26|80,90,80,110,130,110|16,14
-106|0x00323088|未知(槽位+106)|0|32|32|100,100,100,100,100,100|8,14
+106|0x00323088|许愿星|0|32|32|100,100,100,100,100,100|8,14
 107|0x003230A4|代欧奇希斯|386|46|46|50,150,50,150,150,50|14,14
-108|0x003230C0|未知(槽位+108)|0|26|26|65,50,70,65,95,80|14,14
+108|0x003230C0|风铃子|0|26|26|65,50,70,65,95,80|14,14
 '@
 $DECODE_RAW = @'
 engine|official|name
+0||无
 1|1|恶臭
 2|2|降雨
 3|3|加速
@@ -507,40 +508,58 @@ engine|official|name
 73|73|白色烟雾
 74|74|瑜伽之力
 75|75|硬壳盔甲
+76||杂音(骚音)
 77|76|气闸
+78|158|恶作剧之心
 79|101|技术高手
 80|125|强行
+81|117|降雪
 82|89|铁拳
 83|136|多重鳞片
 84|93|湿润之躯
+85|99|无防守
 86|88|下载
 87|90|毒疗
+88|156|魔法镜
 89|144|再生力
 90|123|梦魇
+91|78|电气引擎
 92|82|贪吃鬼
 93|154|正义之心
 94|92|连续攻击
 95|81|雪隐
 96|115|冰冻之躯
 97|146|拨沙
+98|115|冰冻之躯
 99|126|唱反调
+100|159|沙之力
+101|162|胜利之星
 102|120|舍身
 103|87|干燥皮肤
+104|85|耐热
 105|94|太阳之力
+106|111|过滤
 107|116|坚硬岩石
 108|110|有色眼镜
+109|114|引水
 110|102|叶子防守
+111|106|引爆
 112|95|飞毛腿
 113|77|蹒跚
 114|105|超幸运
 115|97|狙击手
 116|83|愤怒穴位
 117|80|不屈之心
+118|86|单纯
+119|79|斗争心
 120|113|胆量
 121|91|适应力
+122|96|一般皮肤
 123|107|危险预知
+124|109|纯朴
 125|108|预知梦
 126|119|察觉
+127|122|花之礼
 128|84|轻装
 129|104|破格
 130|98|魔法防守
@@ -552,12 +571,18 @@ engine|official|name
 136|127|紧张感
 137|163|涡轮火焰
 138|164|兆级电压
+139|152|木乃伊
+140|137|中毒激升
+141|138|受热激升
+142|148|分析
 143|153|自信过度
 144|155|胆怯
 145|128|不服输
+146|150|变身者
 147|141|心情不定
 148|140|心灵感应
 149|124|顺手牵羊
+150|139|收获
 '@
 $AVAIL_RAW = @'
 official|engine
@@ -638,11 +663,15 @@ official|engine
 75|75
 76|77
 77|113
+78|91
+79|119
 80|117
 81|95
 82|92
 83|116
 84|128
+85|104
+86|118
 87|103
 88|86
 89|82
@@ -652,20 +681,28 @@ official|engine
 93|84
 94|105
 95|112
+96|122
 97|115
 98|130
+99|85
 101|79
 102|110
 104|129
 105|114
+106|111
 107|123
 108|125
+109|124
 110|108
+111|106
 113|120
+114|109
 115|96
 116|107
+117|81
 119|126
 120|102
+122|127
 123|90
 124|149
 125|80
@@ -674,27 +711,38 @@ official|engine
 128|145
 130|134
 136|83
+137|140
+138|141
+139|150
 140|148
 141|147
 142|132
 144|89
 146|97
 147|135
+148|142
+150|146
+152|139
 153|143
 154|93
 155|144
+156|88
 157|133
+158|78
+159|100
 160|131
+162|101
 163|137
 164|138
 '@
 
 # ---------- 数据解析 ----------
 $MonList = @()
+$MonBySlot = @{}
 foreach ($ln in ($TABLE_RAW -split "`r?`n")) {
     if ($ln -notmatch '\S' -or $ln -match '^slot\|') { continue }
     $p = $ln -split '\|'
-    $MonList += [pscustomobject]@{
+    $m = [pscustomobject]@{
         Slot   = [int]$p[0]
         Offset = [Convert]::ToInt32($p[1], 16)
         Name   = $p[2]
@@ -704,12 +752,15 @@ foreach ($ln in ($TABLE_RAW -split "`r?`n")) {
         Stats  = $p[6]
         Types  = $p[7]
     }
+    $MonList += $m
+    $MonBySlot[$m.Slot] = $m
 }
 $Decode = @{}
 foreach ($ln in ($DECODE_RAW -split "`r?`n")) {
     if ($ln -notmatch '\S' -or $ln -match '^engine\|') { continue }
     $p = $ln -split '\|'
-    $Decode[[int]$p[0]] = @{ official = [int]$p[1]; name = $p[2] }
+    $off = $null; if ($p[1] -ne '') { $off = [int]$p[1] }
+    $Decode[[int]$p[0]] = @{ official = $off; name = $p[2] }
 }
 $Available = @{}
 foreach ($ln in ($AVAIL_RAW -split "`r?`n")) {
@@ -723,7 +774,7 @@ $availSorted = @($Available.Keys | Sort-Object)
 
 function Get-AbName([int]$engine) {
     if ($Decode.ContainsKey($engine)) { return $Decode[$engine].name }
-    return ('自定义#{0}' -f $engine)
+    return ('未解码#{0}' -f $engine)
 }
 function Get-AbOfficial([int]$engine) {
     if ($Decode.ContainsKey($engine)) { return $Decode[$engine].official }
@@ -736,8 +787,31 @@ function Get-EffPair([object]$m) {
     }
     return @([int]$m.A1, [int]$m.A2)
 }
+function Get-EffStats([object]$m) {
+    if ($script:Pending.ContainsKey($m.Slot) -and $script:Pending[$m.Slot].stats) {
+        return @([int]$script:Pending[$m.Slot].stats[0], [int]$script:Pending[$m.Slot].stats[1],
+                 [int]$script:Pending[$m.Slot].stats[2], [int]$script:Pending[$m.Slot].stats[3],
+                 [int]$script:Pending[$m.Slot].stats[4], [int]$script:Pending[$m.Slot].stats[5])
+    }
+    $o = $m.Stats -split ','
+    return @([int]$o[0], [int]$o[1], [int]$o[2], [int]$o[3], [int]$o[4], [int]$o[5])
+}
+function Stats-Changed([int]$slot) {
+    if (-not $script:Pending.ContainsKey($slot)) { return $false }
+    $p = $script:Pending[$slot]
+    if (-not $p.stats) { return $false }
+    $o = ($MonBySlot[$slot].Stats -split ',') | ForEach-Object { [int]$_ }
+    for ($i = 0; $i -lt 6; $i++) { if ([int]$p.stats[$i] -ne $o[$i]) { return $true } }
+    return $false
+}
+function Pair-Changed([int]$slot) {
+    if (-not $script:Pending.ContainsKey($slot)) { return $false }
+    $p = $script:Pending[$slot]
+    $o = $MonBySlot[$slot]
+    return ($p.a1 -ne $o.A1 -or $p.a2 -ne $o.A2)
+}
 
-# ---------- ROM 锚点校验 (只校验字节 0..21, 不含特性字节, 已改特性的 ROM 也能打开) ----------
+# ---------- ROM 锚点校验 (只校验字节 0..21, 不含特性字节; 锚点条目含种族值前10字节) ----------
 function Test-Rom([byte[]]$b) {
     if ($b.Length -lt ($TABLE_BASE + 420 * 28)) { return $false }
     function testEntry([int]$slot, [byte[]]$sig) {
@@ -748,7 +822,6 @@ function Test-Rom([byte[]]$b) {
         }
         return $true
     }
-    # 妙蛙种子(条目字节0..21) | 脱壳忍者(0..21) | 请假王/盖欧卡/烈空坐/固拉多/代欧奇希斯 (前若干字节)
     if (-not (testEntry (-302) @(0x2D,0x31,0x31,0x2D,0x41,0x41,0x0C,0x03,0x2D,0x40,0x00,0x01,0x00,0x00,0x00,0x00,0x1F,0x14,0x46,0x03,0x01,0x07))) { return $false }
     if (-not (testEntry 0     @(0x01,0x5A,0x2D,0x28,0x1E,0x1E,0x06,0x07,0x2D,0x5F,0x02,0x00,0x00,0x00,0x00,0x00,0xFF,0x0F,0x46,0x01,0x0A,0x0A))) { return $false }
     if (-not (testEntry 63    @(0x96,0xA0,0x64,0x64,0x5F,0x41,0x00,0x00,0x2D,0xD2))) { return $false }
@@ -766,20 +839,23 @@ if ($env:ABILITY_EDITOR_SELFTEST -eq '1') {
     $bytes = [System.IO.File]::ReadAllBytes($src)
     if (-not (Test-Rom $bytes)) { Write-Output 'FAIL anchor'; exit 1 }
     Write-Output 'PASS anchor'
-    $cases = @(
+    $abCases = @(
         @{ slot = -302; a1 = 2;  a2 = 70 },
         @{ slot = -278; a1 = 9;  a2 = 10 },
         @{ slot = 63;   a1 = 3;  a2 = 3 },
         @{ slot = 101;  a1 = 10; a2 = 10 }
     )
-    $offs = @()
-    foreach ($c in $cases) {
+    foreach ($c in $abCases) {
         $off = $TABLE_BASE + ($c.slot - $ORIGIN_SLOT) * 28 + 22
-        $offs += $off
         $old1 = $bytes[$off]; $old2 = $bytes[$off + 1]
         $bytes[$off] = [byte]$c.a1; $bytes[$off + 1] = [byte]$c.a2
-        Write-Output ('PATCH slot{0} @0x{1:X8}: {2:X2},{3:X2} -> {4:X2},{5:X2}' -f $c.slot, $off, $old1, $old2, $c.a1, $c.a2)
+        Write-Output ('PATCH ab slot{0} @0x{1:X8}: {2:X2},{3:X2} -> {4:X2},{5:X2}' -f $c.slot, $off, $old1, $old2, $c.a1, $c.a2)
     }
+    $stCase = @{ slot = -278; stats = @(100,120,80,140,120,120) }
+    $offS = $TABLE_BASE + ($stCase.slot - $ORIGIN_SLOT) * 28
+    $olds = @($bytes[$offS], $bytes[$offS+1], $bytes[$offS+2], $bytes[$offS+3], $bytes[$offS+4], $bytes[$offS+5])
+    for ($i = 0; $i -lt 6; $i++) { $bytes[$offS + $i] = [byte]$stCase.stats[$i] }
+    Write-Output ('PATCH st slot{0} @0x{1:X8}: {2} -> {3}' -f $stCase.slot, $offS, ($olds -join ','), ($stCase.stats -join ','))
     [System.IO.File]::WriteAllBytes($dst, $bytes)
     $reread = [System.IO.File]::ReadAllBytes($dst)
     if ($reread.Length -ne $bytes.Length) { Write-Output 'FAIL length'; exit 1 }
@@ -787,13 +863,18 @@ if ($env:ABILITY_EDITOR_SELFTEST -eq '1') {
         Write-Output 'FAIL rewrite'; exit 1
     }
     Write-Output 'PASS rewrite (写盘复读完全一致)'
-    foreach ($c in $cases) {
+    foreach ($c in $abCases) {
         $off = $TABLE_BASE + ($c.slot - $ORIGIN_SLOT) * 28 + 22
         if ($reread[$off] -ne $c.a1 -or $reread[$off + 1] -ne $c.a2) {
             Write-Output ('FAIL patch slot{0}' -f $c.slot); exit 1
         }
     }
-    Write-Output 'PASS patches (全部修改字节落位正确)'
+    for ($i = 0; $i -lt 6; $i++) {
+        if ($reread[$offS + $i] -ne $stCase.stats[$i]) {
+            Write-Output 'FAIL patch stats'; exit 1
+        }
+    }
+    Write-Output 'PASS patches (特性与种族值字节全部落位正确)'
     if (-not (Test-Rom $reread)) { Write-Output 'FAIL anchor-after'; exit 1 }
     Write-Output 'PASS anchor-after (修改后锚点仍成立)'
     Write-Output 'ALL PASS'
@@ -803,15 +884,15 @@ if ($env:ABILITY_EDITOR_SELFTEST -eq '1') {
 # ---------- 状态 ----------
 $script:RomPath  = $null
 $script:RomBytes = $null
-$script:Pending  = @{}
+$script:Pending  = @{}     # slot -> @{ a1; a2; stats=@(...) 或 $null }
 $script:Selected = $null
 
 $form = New-Object System.Windows.Forms.Form
-$form.Text = '漆黑的魅影 5.0EX+BW 特性修改器 v1.2（原文件不会被修改）'
-$form.Size = New-Object System.Drawing.Size(930, 650)
+$form.Text = '漆黑的魅影 5.0EX+BW 特性/种族值修改器 v1.4（原文件不会被修改）'
+$form.Size = New-Object System.Drawing.Size(930, 725)
 $form.StartPosition = 'CenterScreen'
 $form.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 9)
-$form.MinimumSize = New-Object System.Drawing.Size(930, 650)
+$form.MinimumSize = New-Object System.Drawing.Size(930, 725)
 
 $lblRom = New-Object System.Windows.Forms.Label
 $lblRom.Text = 'ROM 文件:'
@@ -839,109 +920,147 @@ $lblStatus.AutoSize = $true; $lblStatus.ForeColor = [System.Drawing.Color]::DimG
 $form.Controls.Add($lblStatus)
 
 $lblSearch = New-Object System.Windows.Forms.Label
-$lblSearch.Text = '搜索:'; $lblSearch.Location = New-Object System.Drawing.Point(12, 68); $lblSearch.AutoSize = $true
+$lblSearch.Text = '搜索:'; $lblSearch.Location = New-Object System.Drawing.Point(12, 66); $lblSearch.AutoSize = $true
 $form.Controls.Add($lblSearch)
 $txtSearch = New-Object System.Windows.Forms.TextBox
-$txtSearch.Location = New-Object System.Drawing.Point(58, 64); $txtSearch.Width = 180
+$txtSearch.Location = New-Object System.Drawing.Point(58, 62); $txtSearch.Width = 180
 $form.Controls.Add($txtSearch)
 $chkDual = New-Object System.Windows.Forms.CheckBox
-$chkDual.Text = '只看双特性'; $chkDual.Location = New-Object System.Drawing.Point(255, 62); $chkDual.AutoSize = $true
+$chkDual.Text = '只看双特性'; $chkDual.Location = New-Object System.Drawing.Point(255, 60); $chkDual.AutoSize = $true
 $form.Controls.Add($chkDual)
 $chkSingle = New-Object System.Windows.Forms.CheckBox
-$chkSingle.Text = '只看单特性'; $chkSingle.Location = New-Object System.Drawing.Point(350, 62); $chkSingle.AutoSize = $true
+$chkSingle.Text = '只看单特性'; $chkSingle.Location = New-Object System.Drawing.Point(350, 60); $chkSingle.AutoSize = $true
 $form.Controls.Add($chkSingle)
 $chkMod = New-Object System.Windows.Forms.CheckBox
-$chkMod.Text = '只看已修改'; $chkMod.Location = New-Object System.Drawing.Point(445, 62); $chkMod.AutoSize = $true
+$chkMod.Text = '只看已修改'; $chkMod.Location = New-Object System.Drawing.Point(445, 60); $chkMod.AutoSize = $true
 $form.Controls.Add($chkMod)
 
 $lv = New-Object System.Windows.Forms.ListView
 $lv.View = 'Details'; $lv.FullRowSelect = $true; $lv.GridLines = $true
 $lv.HideSelection = $false
-$lv.Location = New-Object System.Drawing.Point(12, 90); $lv.Size = New-Object System.Drawing.Size(895, 255)
+$lv.Location = New-Object System.Drawing.Point(12, 88); $lv.Size = New-Object System.Drawing.Size(895, 235)
 $lv.Columns.Add('图鉴', 50) | Out-Null
-$lv.Columns.Add('名称', 130) | Out-Null
-$lv.Columns.Add('特性1', 150) | Out-Null
-$lv.Columns.Add('特性2', 150) | Out-Null
+$lv.Columns.Add('名称', 125) | Out-Null
+$lv.Columns.Add('特性1', 145) | Out-Null
+$lv.Columns.Add('特性2', 145) | Out-Null
 $lv.Columns.Add('种族值(HP攻防速特攻特防)', 220) | Out-Null
 $lv.Columns.Add('状态', 170) | Out-Null
 $form.Controls.Add($lv)
 
+# ---- 特性编辑 ----
 $gb = New-Object System.Windows.Forms.GroupBox
 $gb.Text = '特性编辑'
-$gb.Location = New-Object System.Drawing.Point(12, 352)
-$gb.Size = New-Object System.Drawing.Size(895, 155)
+$gb.Location = New-Object System.Drawing.Point(12, 328)
+$gb.Size = New-Object System.Drawing.Size(895, 148)
 $form.Controls.Add($gb)
 
 $lblSel = New-Object System.Windows.Forms.Label
 $lblSel.Text = '（在上方列表点选精灵）'
-$lblSel.Location = New-Object System.Drawing.Point(15, 24); $lblSel.AutoSize = $true
+$lblSel.Location = New-Object System.Drawing.Point(15, 20); $lblSel.AutoSize = $true
 $lblSel.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 10, [System.Drawing.FontStyle]::Bold)
 $gb.Controls.Add($lblSel)
 
 $lblCur = New-Object System.Windows.Forms.Label
 $lblCur.Text = ''
-$lblCur.Location = New-Object System.Drawing.Point(15, 52); $lblCur.AutoSize = $true
+$lblCur.Location = New-Object System.Drawing.Point(15, 46); $lblCur.AutoSize = $true
 $lblCur.ForeColor = [System.Drawing.Color]::DarkSlateBlue
 $gb.Controls.Add($lblCur)
 
 $lblA1 = New-Object System.Windows.Forms.Label
-$lblA1.Text = '新特性1:'; $lblA1.Location = New-Object System.Drawing.Point(15, 86); $lblA1.AutoSize = $true
+$lblA1.Text = '新特性1:'; $lblA1.Location = New-Object System.Drawing.Point(15, 76); $lblA1.AutoSize = $true
 $gb.Controls.Add($lblA1)
 $cmbA1 = New-Object System.Windows.Forms.ComboBox
-$cmbA1.Location = New-Object System.Drawing.Point(78, 82); $cmbA1.Width = 235
+$cmbA1.Location = New-Object System.Drawing.Point(78, 72); $cmbA1.Width = 235
 $cmbA1.DropDownStyle = [System.Windows.Forms.ComboBoxStyle]::DropDownList
 $gb.Controls.Add($cmbA1)
 
 $lblA2 = New-Object System.Windows.Forms.Label
-$lblA2.Text = '新特性2:'; $lblA2.Location = New-Object System.Drawing.Point(335, 86); $lblA2.AutoSize = $true
+$lblA2.Text = '新特性2:'; $lblA2.Location = New-Object System.Drawing.Point(335, 76); $lblA2.AutoSize = $true
 $gb.Controls.Add($lblA2)
 $cmbA2 = New-Object System.Windows.Forms.ComboBox
-$cmbA2.Location = New-Object System.Drawing.Point(398, 82); $cmbA2.Width = 235
+$cmbA2.Location = New-Object System.Drawing.Point(398, 72); $cmbA2.Width = 235
 $cmbA2.DropDownStyle = [System.Windows.Forms.ComboBoxStyle]::DropDownList
 $gb.Controls.Add($cmbA2)
 
 $chkNoA2 = New-Object System.Windows.Forms.CheckBox
 $chkNoA2.Text = '无第二特性（单特性）'
-$chkNoA2.Location = New-Object System.Drawing.Point(655, 85); $chkNoA2.AutoSize = $true
+$chkNoA2.Location = New-Object System.Drawing.Point(655, 75); $chkNoA2.AutoSize = $true
 $gb.Controls.Add($chkNoA2)
 
 $btnApply = New-Object System.Windows.Forms.Button
-$btnApply.Text = '应用修改（暂存）'
-$btnApply.Location = New-Object System.Drawing.Point(15, 118); $btnApply.Width = 150
+$btnApply.Text = '应用特性修改（暂存）'
+$btnApply.Location = New-Object System.Drawing.Point(15, 108); $btnApply.Width = 165
 $gb.Controls.Add($btnApply)
 $btnRevert = New-Object System.Windows.Forms.Button
-$btnRevert.Text = '撤销此精灵修改'
-$btnRevert.Location = New-Object System.Drawing.Point(175, 118); $btnRevert.Width = 140
+$btnRevert.Text = '撤销此精灵全部修改'
+$btnRevert.Location = New-Object System.Drawing.Point(190, 108); $btnRevert.Width = 160
 $gb.Controls.Add($btnRevert)
+
+# ---- 种族值编辑 ----
+$gs = New-Object System.Windows.Forms.GroupBox
+$gs.Text = '种族值编辑（1-255）'
+$gs.Location = New-Object System.Drawing.Point(12, 480)
+$gs.Size = New-Object System.Drawing.Size(895, 96)
+$form.Controls.Add($gs)
+
+$lblS1 = New-Object System.Windows.Forms.Label; $lblS1.Text = 'HP';  $lblS1.Location = New-Object System.Drawing.Point(15, 28); $lblS1.AutoSize = $true; $gs.Controls.Add($lblS1)
+$tbS1 = New-Object System.Windows.Forms.TextBox; $tbS1.Location = New-Object System.Drawing.Point(38, 24); $tbS1.Width = 46; $gs.Controls.Add($tbS1)
+$lblS2 = New-Object System.Windows.Forms.Label; $lblS2.Text = '攻击'; $lblS2.Location = New-Object System.Drawing.Point(96, 28); $lblS2.AutoSize = $true; $gs.Controls.Add($lblS2)
+$tbS2 = New-Object System.Windows.Forms.TextBox; $tbS2.Location = New-Object System.Drawing.Point(126, 24); $tbS2.Width = 46; $gs.Controls.Add($tbS2)
+$lblS3 = New-Object System.Windows.Forms.Label; $lblS3.Text = '防御'; $lblS3.Location = New-Object System.Drawing.Point(184, 28); $lblS3.AutoSize = $true; $gs.Controls.Add($lblS3)
+$tbS3 = New-Object System.Windows.Forms.TextBox; $tbS3.Location = New-Object System.Drawing.Point(214, 24); $tbS3.Width = 46; $gs.Controls.Add($tbS3)
+$lblS4 = New-Object System.Windows.Forms.Label; $lblS4.Text = '速度'; $lblS4.Location = New-Object System.Drawing.Point(272, 28); $lblS4.AutoSize = $true; $gs.Controls.Add($lblS4)
+$tbS4 = New-Object System.Windows.Forms.TextBox; $tbS4.Location = New-Object System.Drawing.Point(302, 24); $tbS4.Width = 46; $gs.Controls.Add($tbS4)
+$lblS5 = New-Object System.Windows.Forms.Label; $lblS5.Text = '特攻'; $lblS5.Location = New-Object System.Drawing.Point(360, 28); $lblS5.AutoSize = $true; $gs.Controls.Add($lblS5)
+$tbS5 = New-Object System.Windows.Forms.TextBox; $tbS5.Location = New-Object System.Drawing.Point(390, 24); $tbS5.Width = 46; $gs.Controls.Add($tbS5)
+$lblS6 = New-Object System.Windows.Forms.Label; $lblS6.Text = '特防'; $lblS6.Location = New-Object System.Drawing.Point(448, 28); $lblS6.AutoSize = $true; $gs.Controls.Add($lblS6)
+$tbS6 = New-Object System.Windows.Forms.TextBox; $tbS6.Location = New-Object System.Drawing.Point(478, 24); $tbS6.Width = 46; $gs.Controls.Add($tbS6)
+
+$lblSum = New-Object System.Windows.Forms.Label
+$lblSum.Text = '总和: -'
+$lblSum.Location = New-Object System.Drawing.Point(540, 28); $lblSum.AutoSize = $true
+$lblSum.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 9, [System.Drawing.FontStyle]::Bold)
+$gs.Controls.Add($lblSum)
+
+$btnApplyStats = New-Object System.Windows.Forms.Button
+$btnApplyStats.Text = '应用种族值修改（暂存）'
+$btnApplyStats.Location = New-Object System.Drawing.Point(15, 58); $btnApplyStats.Width = 180
+$gs.Controls.Add($btnApplyStats)
+
+$lblStatHint = New-Object System.Windows.Forms.Label
+$lblStatHint.Text = '每项 1..255；HP=1 合法（如脱壳忍者）。总和仅作提示，不做强制。'
+$lblStatHint.Location = New-Object System.Drawing.Point(210, 63); $lblStatHint.AutoSize = $true
+$lblStatHint.ForeColor = [System.Drawing.Color]::DimGray
+$gs.Controls.Add($lblStatHint)
 
 $lblPending = New-Object System.Windows.Forms.Label
 $lblPending.Text = '暂存修改: 0 处'
-$lblPending.Location = New-Object System.Drawing.Point(12, 518); $lblPending.AutoSize = $true
+$lblPending.Location = New-Object System.Drawing.Point(12, 586); $lblPending.AutoSize = $true
 $lblPending.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 9, [System.Drawing.FontStyle]::Bold)
 $form.Controls.Add($lblPending)
 
 $btnResetAll = New-Object System.Windows.Forms.Button
 $btnResetAll.Text = '清空全部暂存'
-$btnResetAll.Location = New-Object System.Drawing.Point(160, 513); $btnResetAll.Width = 130
+$btnResetAll.Location = New-Object System.Drawing.Point(160, 581); $btnResetAll.Width = 130
 $form.Controls.Add($btnResetAll)
 
 $btnExport = New-Object System.Windows.Forms.Button
 $btnExport.Text = '导出新 ROM (.gba)…'
-$btnExport.Location = New-Object System.Drawing.Point(705, 513)
+$btnExport.Location = New-Object System.Drawing.Point(705, 581)
 $btnExport.Width = 200
 $btnExport.BackColor = [System.Drawing.Color]::Honeydew
 $form.Controls.Add($btnExport)
 
 $txtLog = New-Object System.Windows.Forms.TextBox
 $txtLog.Multiline = $true; $txtLog.ReadOnly = $true; $txtLog.ScrollBars = 'Vertical'
-$txtLog.Location = New-Object System.Drawing.Point(12, 542); $txtLog.Size = New-Object System.Drawing.Size(895, 60)
+$txtLog.Location = New-Object System.Drawing.Point(12, 610); $txtLog.Size = New-Object System.Drawing.Size(895, 60)
 $form.Controls.Add($txtLog)
 
 function Log([string]$m) {
     $txtLog.AppendText(('[' + (Get-Date -Format 'HH:mm:ss') + '] ' + $m + "`r`n"))
 }
 
-# ---------- 可写特性下拉 ----------
+# ---------- 可写特性下拉 (官方编号排序) ----------
 foreach ($o in $availSorted) {
     $nm = $null
     foreach ($d in $Decode.Values) { if ($d.official -eq $o) { $nm = $d.name; break } }
@@ -950,6 +1069,30 @@ foreach ($o in $availSorted) {
     [void]$cmbA1.Items.Add($item)
     [void]$cmbA2.Items.Add($item)
 }
+
+# ---------- 总和显示 ----------
+function Update-Sum {
+    $total = 0; $valid = $true
+    foreach ($tb in @($tbS1, $tbS2, $tbS3, $tbS4, $tbS5, $tbS6)) {
+        $v = 0
+        if (-not [int]::TryParse($tb.Text.Trim(), [ref]$v)) { $valid = $false; continue }
+        if ($v -lt 1 -or $v -gt 255) { $valid = $false }
+        $total += $v
+    }
+    if ($valid) {
+        $lblSum.Text = ('总和: {0}' -f $total)
+        $lblSum.ForeColor = [System.Drawing.Color]::Black
+    } else {
+        $lblSum.Text = ('总和: {0}（有无效项）' -f $total)
+        $lblSum.ForeColor = [System.Drawing.Color]::Firebrick
+    }
+}
+$tbS1.Add_TextChanged({ Update-Sum })
+$tbS2.Add_TextChanged({ Update-Sum })
+$tbS3.Add_TextChanged({ Update-Sum })
+$tbS4.Add_TextChanged({ Update-Sum })
+$tbS5.Add_TextChanged({ Update-Sum })
+$tbS6.Add_TextChanged({ Update-Sum })
 
 # ---------- 列表刷新 ----------
 function Refresh-List {
@@ -978,11 +1121,12 @@ function Refresh-List {
         if ($pair[1] -eq 0) { [void]$it.SubItems.Add('') }
         elseif ($pair[1] -eq $pair[0]) { [void]$it.SubItems.Add('（复写）' + $mark) }
         else { [void]$it.SubItems.Add((Get-AbName $pair[1]) + $mark) }
-        [void]$it.SubItems.Add($m.Stats)
+        $st6 = Get-EffStats $m
+        [void]$it.SubItems.Add(($st6 -join ','))
         $st = ''
         if ($script:Pending.ContainsKey($m.Slot)) {
             $st = '已修改(暂存)'; $it.BackColor = [System.Drawing.Color]::LemonChiffon
-        } elseif ($m.Sp -eq 0) { $st = '物种未识别' }
+        }
         [void]$it.SubItems.Add($st)
         $it.Tag = $m
         [void]$lv.Items.Add($it)
@@ -1021,6 +1165,10 @@ function Show-Mon([object]$m) {
             if ($idx2 -ge 0) { $cmbA2.SelectedIndex = $idx2 }
         }
     }
+
+    $st6 = Get-EffStats $m
+    $tbS1.Text = [string]$st6[0]; $tbS2.Text = [string]$st6[1]; $tbS3.Text = [string]$st6[2]
+    $tbS4.Text = [string]$st6[3]; $tbS5.Text = [string]$st6[4]; $tbS6.Text = [string]$st6[5]
 }
 
 $lv.Add_SelectedIndexChanged({
@@ -1031,6 +1179,7 @@ $chkDual.Add_CheckedChanged({ Refresh-List })
 $chkSingle.Add_CheckedChanged({ Refresh-List })
 $chkMod.Add_CheckedChanged({ Refresh-List })
 
+# ---------- 应用: 特性 ----------
 $btnApply.Add_Click({
     if (-not $script:Selected) { return }
     if ($cmbA1.SelectedIndex -lt 0) {
@@ -1046,9 +1195,40 @@ $btnApply.Add_Click({
         $o2 = $availSorted[$cmbA2.SelectedIndex]
         $e2 = $OfficialToEngine[$o2]
     }
-    $script:Pending[$script:Selected.Slot] = @{ a1 = $e1; a2 = $e2 }
+    $slot = $script:Selected.Slot
+    $old = $null
+    if ($script:Pending.ContainsKey($slot)) { $old = $script:Pending[$slot] }
+    $statsVal = $null
+    if ($old -and $old.stats) { $statsVal = $old.stats }
+    $script:Pending[$slot] = @{ a1 = $e1; a2 = $e2; stats = $statsVal }
     if ($e2 -eq $e1) { $a2txt = '（复写=单特性）' } else { $a2txt = Get-AbName $e2 }
-    Log ('暂存: {0} -> 特性1={1}, 特性2={2}' -f $script:Selected.Name, (Get-AbName $e1), $a2txt)
+    Log ('暂存特性: {0} -> {1} / {2}' -f $script:Selected.Name, (Get-AbName $e1), $a2txt)
+    Refresh-List
+    Show-Mon $script:Selected
+})
+
+# ---------- 应用: 种族值 ----------
+$btnApplyStats.Add_Click({
+    if (-not $script:Selected) { return }
+    $vals = @()
+    foreach ($tb in @($tbS1, $tbS2, $tbS3, $tbS4, $tbS5, $tbS6)) {
+        $v = 0
+        if (-not [int]::TryParse($tb.Text.Trim(), [ref]$v) -or $v -lt 1 -or $v -gt 255) {
+            [void][System.Windows.Forms.MessageBox]::Show(
+                ('种族值每项必须是 1..255 的整数，当前有无效输入: ' + $tb.Text), '输入无效')
+            return
+        }
+        $vals += $v
+    }
+    $slot = $script:Selected.Slot
+    $old = $null
+    if ($script:Pending.ContainsKey($slot)) { $old = $script:Pending[$slot] }
+    $a1 = $script:Selected.A1; $a2 = $script:Selected.A2
+    if ($old) { $a1 = $old.a1; $a2 = $old.a2 }
+    $script:Pending[$slot] = @{ a1 = $a1; a2 = $a2; stats = $vals }
+    $o = ($script:Selected.Stats -split ',') -join ','
+    Log ('暂存种族值: {0} -> ({1})   原: ({2})  总和 {3}' -f
+        $script:Selected.Name, ($vals -join ','), $o, (($vals | Measure-Object -Sum).Sum))
     Refresh-List
     Show-Mon $script:Selected
 })
@@ -1128,13 +1308,25 @@ $btnExport.Add_Click({
     $out = New-Object byte[] $script:RomBytes.Length
     [Array]::Copy($script:RomBytes, $out, $out.Length)
     $slots = @($script:Pending.Keys | Sort-Object)
+    $nAb = 0; $nSt = 0
     foreach ($slot in $slots) {
         $p = $script:Pending[$slot]
-        $off = $TABLE_BASE + ($slot - $ORIGIN_SLOT) * 28 + 22
-        $out[$off] = [byte]$p.a1
-        $out[$off + 1] = [byte]$p.a2
-        $a2txt = Get-AbName $p.a2; if ($p.a2 -eq $p.a1) { $a2txt = '（复写）' }
-        Log ('写入: 槽{0} @0x{1:X8} <- ({2},{3})  {4}/{5}' -f $slot, $off, $p.a1, $p.a2, (Get-AbName $p.a1), $a2txt)
+        $m = $MonBySlot[$slot]
+        $baseOff = $TABLE_BASE + ($slot - $ORIGIN_SLOT) * 28
+        if (Pair-Changed $slot) {
+            $out[$baseOff + 22] = [byte]$p.a1
+            $out[$baseOff + 23] = [byte]$p.a2
+            $nAb++
+            $a2txt = Get-AbName $p.a2; if ($p.a2 -eq $p.a1) { $a2txt = '（复写）' }
+            Log ('写入特性: {0} 槽{1} @0x{2:X8} <- ({3},{4})  {5}/{6}' -f
+                $m.Name, $slot, ($baseOff + 22), $p.a1, $p.a2, (Get-AbName $p.a1), $a2txt)
+        }
+        if (Stats-Changed $slot) {
+            for ($i = 0; $i -lt 6; $i++) { $out[$baseOff + $i] = [byte]$p.stats[$i] }
+            $nSt++
+            Log ('写入种族值: {0} 槽{1} @0x{2:X8} <- ({3})  原: ({4})' -f
+                $m.Name, $slot, $baseOff, (@($p.stats) -join ','), $m.Stats)
+        }
     }
     [System.IO.File]::WriteAllBytes($sd.FileName, $out)
     $rr = [System.IO.File]::ReadAllBytes($sd.FileName)
@@ -1143,17 +1335,32 @@ $btnExport.Add_Click({
     $okPatch = $true
     foreach ($slot in $slots) {
         $p = $script:Pending[$slot]
-        $off = $TABLE_BASE + ($slot - $ORIGIN_SLOT) * 28 + 22
-        if ($rr[$off] -ne $p.a1 -or $rr[$off + 1] -ne $p.a2) { $okPatch = $false }
+        $baseOff = $TABLE_BASE + ($slot - $ORIGIN_SLOT) * 28
+        if (Pair-Changed $slot) {
+            if ($rr[$baseOff + 22] -ne $p.a1 -or $rr[$baseOff + 23] -ne $p.a2) { $okPatch = $false }
+        }
+        if (Stats-Changed $slot) {
+            for ($i = 0; $i -lt 6; $i++) {
+                if ($rr[$baseOff + $i] -ne [byte]$p.stats[$i]) { $okPatch = $false }
+            }
+        }
     }
-    $okAnchor = Test-Rom $rr
+    # 锚点复验: 若改动了锚点精灵的种族值, 跳过相关锚点检查
+    $anchorSlots = @(-302, 0, 63, 101, 102, 103, 107)
+    $touchAnchor = $false
+    foreach ($slot in $slots) {
+        if (Stats-Changed $slot -and $anchorSlots -contains $slot) { $touchAnchor = $true }
+    }
+    $anchorTxt = '通过'
+    if ($touchAnchor) { $anchorTxt = '跳过（锚点精灵种族值被修改，属预期）' }
+    elseif (-not (Test-Rom $rr)) { $anchorTxt = '异常!' }
     $msg = '导出完成: {0}' -f $sd.FileName
-    $msg += [Environment]::NewLine + ('共 {0} 处特性修改（{1} 字节）' -f $slots.Count, $slots.Count * 2)
+    $msg += [Environment]::NewLine + ('特性修改 {0} 处，种族值修改 {1} 处' -f $nAb, $nSt)
     $msg += [Environment]::NewLine + ('写盘完整性: {0}' -f $(if ($okEq) { '通过' } else { '异常!' }))
     $msg += [Environment]::NewLine + ('修改字节落位: {0}' -f $(if ($okPatch) { '通过' } else { '异常!' }))
-    $msg += [Environment]::NewLine + ('锚点校验: {0}' -f $(if ($okAnchor) { '通过' } else { '异常!' }))
+    $msg += [Environment]::NewLine + ('锚点校验: {0}' -f $anchorTxt)
     $ico = [System.Windows.Forms.MessageBoxIcon]::Information
-    if (-not ($okEq -and $okPatch -and $okAnchor)) { $ico = [System.Windows.Forms.MessageBoxIcon]::Warning }
+    if (-not ($okEq -and $okPatch) -or $anchorTxt -eq '异常!') { $ico = [System.Windows.Forms.MessageBoxIcon]::Warning }
     [void][System.Windows.Forms.MessageBox]::Show($msg, '导出完成', 'OK', $ico)
 })
 
